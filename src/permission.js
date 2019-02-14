@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth' // 验权
 const whiteList = ['/login','/404'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (getToken()) {
+  /*if (getToken()) {
     console.log('getToken')
     if (to.path === '/login') {
       console.log('/login')
@@ -43,7 +43,9 @@ router.beforeEach((to, from, next) => {
       next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
       NProgress.done()
     }
-  }
+  }*/
+  next()
+  NProgress.done()
 })
 
 router.afterEach(() => {

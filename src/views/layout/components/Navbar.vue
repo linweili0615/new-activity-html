@@ -5,8 +5,8 @@
     <el-dropdown class="avatar-container" trigger="click">
       <div class="avatar-wrapper">
         <!--<img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-        欢迎您，<span>{{name}}</span>
-        <i class="el-icon-caret-bottom"/>
+<!--        欢迎您，<span>{{name}}</span>
+        <i class="el-icon-caret-bottom"/>-->
       </div>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
         <router-link class="inlineBlock" to="/">

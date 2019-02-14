@@ -37,41 +37,6 @@ export const constantRouterMap = [
         name: '项目列表',
         component: () => import('@/views/test/ProjectList'),
         meta: { title: '项目列表', icon: 'form' }
-      },
-      {
-        path: '/api/add',
-        name: 'API接口',
-        component: () => import('@/views/test/ApiNew'),
-        meta: { title: 'API接口', icon: 'form' }
-      },{
-        path: '/api/edit',
-        name: '修改API接口',
-        hidden: true,
-        component: () => import('@/views/test/ApiNew'),
-        meta: { title: '修改API接口', icon: 'form' }
-      },{
-        path: '/api/project',
-        hidden: true,
-        component: () => import('@/views/test/ApiCase'),
-        name: '测试分组',
-        meta: { title: '测试分组', icon: 'example' }
-      },{
-        path: '/api/taskcase',
-        component: () => import('@/views/test/TaskCase'),
-        name: '任务详情',
-        hidden: true,
-        meta: { title: '任务详情', icon: 'example' }
-      },{
-        path: '/api/tasklist',
-        component: () => import('@/views/test/TaskList'),
-        name: '任务列表',
-        meta: { title: '任务列表', icon: 'example' }
-      },{
-        path: '/api/task/result',
-        component: () => import('@/views/test/TaskResult'),
-        name: '结果页',
-        hidden: true,
-        meta: { title: '结果页', icon: 'example' }
       }
     ]
   },
