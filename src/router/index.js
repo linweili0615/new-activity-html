@@ -13,30 +13,30 @@ export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   name: 'Dashboard',
+  //   hidden: true,
+  //   children: [{
+  //     path: 'dashboard',
+  //     component: () => import('@/views/dashboard/index')
+  //   }]
+  // },
+
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    name: 'Dashboard',
-    hidden: true,
-    children: [{
-      path: 'dashboard',
-      component: () => import('@/views/dashboard/index')
-    }]
-  },
-
-  {
-    path: '/api',
-    component: Layout,
-    redirect: '/api/list',
-    name: 'API管理',
-    meta: { title: 'API管理', icon: 'example' },
+    redirect: '/project/list',
+    name: '管理',
+    meta: { title: '管理', icon: 'example' },
     children: [
       {
-        path: '/api/list',
-        name: '项目列表',
+        path: '/project/list',
+        name: '记录列表',
         component: () => import('@/views/test/ProjectList'),
-        meta: { title: '项目列表', icon: 'form' }
+        meta: { title: '记录列表', icon: 'form' }
       }
     ]
   },

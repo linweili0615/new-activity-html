@@ -22,24 +22,24 @@
                                 height="73vh"
                                 @selection-change="selsChange"
                                 style="width: 100%;">
-                        <el-table-column width="50" label="序号" prop="e_id"></el-table-column>
+                        <!--<el-table-column width="50" label="序号" prop="e_id"></el-table-column>-->
                         <el-table-column width="240" label="服务名称" prop="p_name" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="branch" label="GIT分支" width="350"  show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="md5" label="MD5" width="380" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="branch" label="GIT分支" width="320"  show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="md5" label="MD5" width="300" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="modify_content" label="修改内容" width="150" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="modify_tester" label="测试" width="100" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="modify_tester" label="测试" width="120" show-overflow-tooltip></el-table-column>
                         <el-table-column label="状态" width="100">
                           <template slot-scope="scope">
-                            <el-select v-model="scope.row.status" size="medium" @change="checkRequest">
+                            <el-select v-model="scope.row.status" size="medium" @change="checkRequest(scope.row)">
                               <el-option v-for="(item,index) in p_status" :key="index+''" :label="item.label" :value="item.value"></el-option>
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="modify_date" label="处理时间" width="120" sortable show-overflow-tooltip></el-table-column>
-                        <el-table-column label="操作" style="min-width: 300px;">
+                        <el-table-column prop="modify_date" label="处理时间" width="200" sortable show-overflow-tooltip></el-table-column>
+                        <el-table-column label="操作" style="min-width: 260px;">
                           <template slot-scope="scope">
-                            <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                            <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
+                            <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+                            <el-button type="danger" size="small" @click="handleDel(scope.row)">删除</el-button>
                           </template>
                         </el-table-column>
                       </el-table>
@@ -60,58 +60,55 @@
                       </el-col>
 
                       <!--编辑界面-->
-                      <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false" style="width: 75%; left: 12.5%">
-                        <el-form :model="editForm" label-width="80px"  :rules="editFormRules" ref="editForm">
-                          <el-form-item label="项目名称" prop="project_name">
-                            <el-input v-model="editForm.project_name" auto-complete="off"></el-input>
-                          </el-form-item>
-                          <el-col :span="12">
-                            <el-form-item label="状态" prop='status'>
-                              <el-select v-model="editForm.status" placeholder="请选择" >
-                                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                              </el-select>
-                            </el-form-item>
-                          </el-col>
-                        </el-form>
-                        <div slot="footer" class="dialog-footer">
-                          <el-button @click.native="editFormVisible = false">取消</el-button>
-                          <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-                        </div>
-                      </el-dialog>
+                      <el-dialog title="编辑" :visible.sync="addFormVisible" :close-on-click-modal="false"
+                                 :before-close="resetForm">
 
-                      <!--新增界面-->
-                      <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false"
-                                 :before-close="handleClose"
-                                >
-                        <el-form :model="projectForm" label-width="100px" :rules="addFormRules" ref="addForm">
+                        <el-dialog width="50%" title="新增" :visible.sync="innerVisible" append-to-body :before-close="resetprojectExtendForm" :close-on-click-modal="false">
+                          <el-form :model="projectForm" :rules="projectFormRules" ref="projectForm">
+                            <el-form-item label="服务名称：" prop="p_name">
+                              <el-input v-model="projectForm.p_name" placeholder="请输入服务名称"></el-input>
+                            </el-form-item>
+                          </el-form>
+                          <div slot="footer" class="dialog-footer">
+                            <el-button @click.native="resetprojectExtendForm">取消</el-button>
+                            <el-button type="primary" @click.native="addProjectSubmit">提交</el-button>
+                          </div>
+                        </el-dialog>
+
+
+                        <el-form :model="projectExtendForm" label-width="100px" :rules="projectExtendFormRules" ref="projectExtendForm">
                           <el-form-item label="服务名称:" prop="p_name">
-                            <el-input v-model.trim="projectForm.p_name" auto-complete="off" placeholder="请输入服务名称"></el-input>
+                              <el-select v-model="projectExtendForm.p_name" filterable placeholder="请选择服务名称">
+                                <el-option v-for="item in s_names" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                              </el-select>
+                            <el-button type="primary" @click="openProject">添加</el-button>
+
                           </el-form-item>
                           <el-form-item label="GIT分支:" prop="branch">
-                            <el-input v-model.trim="projectForm.branch" auto-complete="off" placeholder="请输入GIT分支"></el-input>
+                            <el-input v-model.trim="projectExtendForm.branch" auto-complete="off" placeholder="请输入GIT分支"></el-input>
                           </el-form-item>
                           <el-form-item label="MD5值:" prop="md5">
-                            <el-input v-model.trim="projectForm.md5" auto-complete="off" placeholder="请输入MD5值"></el-input>
+                            <el-input v-model.trim="projectExtendForm.md5" auto-complete="off" placeholder="请输入MD5值"></el-input>
                           </el-form-item>
                           <el-form-item label="修改内容:" prop="modify_content">
-                            <el-input type="textarea" v-model="projectForm.modify_content" :rows="2" placeholder="请输入修改内容"></el-input>
+                            <el-input type="textarea" v-model="projectExtendForm.modify_content" :rows="2" placeholder="请输入修改内容"></el-input>
                           </el-form-item>
-
                           <el-form-item label="测试:" prop="modify_tester">
-                            <el-select v-model="projectForm.modify_tester" placeholder="请选择测试" @change="checkRequest">
+                            <el-select v-model="projectExtendForm.modify_tester" placeholder="请选择测试">
                               <el-option v-for="(item,index) in p_tester" :key="index+''" :label="item.label" :value="item.value"></el-option>
                             </el-select>
                           </el-form-item>
 
                           <el-form-item label="状态:">
-                            <el-select v-model="projectForm.status" placeholder="请选择状态" @change="checkRequest">
+                            <el-select v-model="projectExtendForm.status" placeholder="请选择状态">
                               <el-option v-for="(item,index) in p_status" :key="index+''" :label="item.label" :value="item.value"></el-option>
                             </el-select>
                           </el-form-item>
                         </el-form>
                         <div slot="footer" class="dialog-footer">
-                          <el-button @click.native="addFormVisible = false">取消</el-button>
-                          <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+                          <el-button @click.native="resetForm">取消</el-button>
+                          <el-button type="primary" @click.native="addSubmit">提交</el-button>
                         </div>
                       </el-dialog>
                     </section>
@@ -152,7 +149,7 @@
                 currentpage: 1,
                 listLoading: false,
                 sels: [],//列表选中列
-
+                innerVisible: false,
                 editFormVisible: false,//编辑界面是否显示
                 editLoading: false,
                 options: [{ label: "启用", value: 1}, { label: "禁用", value: -1}],
@@ -162,33 +159,31 @@
                         { min: 2, max: 30, message: '请输入长度在2到30个字符的项目名称', trigger: 'blur' }
                     ]
                 },
-                //编辑界面数据
-                editForm: {
-                    id: '',
-                    project_name: '',
-                    status: '',
-                    author: '',
-                    update_author: '',
-                    create_time: '',
-                    modify_time: ''
-                },
+              projectForm:{
+                  p_name:''
+              },
+              projectFormRules: {
+                p_name: { required: true, message: '请输入服务名称', trigger: 'blur' },
+              },
+              deal_type:'add',
               p_status: [
                 {value: '灰度', label: '灰度'},
                 {value: '正式', label: '正式'},
               ],
               p_tester:[],
+              s_names: [],
               p_status_val: '',
-                addFormVisible: false,//新增界面是否显示
-                addLoading: false,
-                addFormRules: {
-                    project_name: [
-                        { required: true, message: '请输入项目名称', trigger: 'blur' },
-                        { min: 2, max: 30, message: '请输入长度在2到30个字符的项目名称', trigger: 'blur' },
-                        { required: true, trigger: 'blur', validator: validProjectName }
-                    ]
+              addFormVisible: false,//新增界面是否显示
+              projectExtendFormRules: {
+                p_name: { required: true, message: '请选择服务名称', trigger: 'blur' },
+                branch: { required: true, message: '请输入GIT分支', trigger: 'blur' },
+                modify_content: { required: true, message: '请输入修改内容', trigger: 'blur' },
+                modify_tester: { required: true, message: '请选择测试', trigger: 'blur' },
+                status: { required: true, message: '请选择状态', trigger: 'blur' }
                 },
                 //新增界面数据
-              projectForm: {
+              projectExtendForm: {
+                e_id:'',
                 p_name: '',
                 branch:'',
                 md5:'',
@@ -199,15 +194,47 @@
             }
         },
         methods: {
+          resetprojectExtendForm(){
+            this.innerVisible = false
+            this.$refs.projectForm.resetFields()
+          },
+          addProjectSubmit(){
+            this.$refs.projectForm.validate(valid => {
+              if(valid){
+                  this.$axios.post('/project/add',this.projectForm.p_name)
+                    .then(res => {
+                      if(res.data.status === 'SUCCESS'){
+                        this.innerVisible = false
+                        this.getProjectList()
+                      }else {
+                        this.$message.error(res.data.msg)
+                      }
+                    })
+                    .catch(error => {
+                      console.log(error)
+                    })
+              }
+            })
+          },
+          openProject(){
+            this.innerVisible = true
+          },
             // 获取项目列表
             getProjectExtendList(pageSize,pageNo) {
               if(pageNo > this.pageCount){
                 pageNo = this.pageCount;
               }
                 this.listLoading = true;
-                this.$axios.get('/project/extend/list').then(response =>{
+                this.$axios.post('/project/extend/list',{
+                  pageSize: pageSize,
+                  pageNo: pageNo
+                }).then(response =>{
                     if(response.data.status === 'SUCCESS'){
                       this.project = response.data.data;
+                      this.total= response.data.total
+                      this.pageCount= response.data.pageCount
+                      this.pageNo= response.data.pageNo
+                      this.pageSize= response.data.pageSize
                       this.listLoading = false;
                     }else{
                       this.listLoading = false;
@@ -226,24 +253,19 @@
                 })
 
             },
+
+
             //删除
-            handleDel: function (index, row) {
+            handleDel: function (row) {
               // console.log(index, row)
               this.$confirm('确认删除该记录吗？','提示',{
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
               }).then(() => {
-                this.$axios.post('/project/del', row.id).then(response => {
-                  // console.log(response.data);
+                this.$axios.post('/project/extend/del', row.e_id).then(response => {
                   if(response.data.status === 'SUCCESS'){
-                    this.$message({
-                      type: 'success',
-                      message: '删除成功!'
-                    });
-                    this.filters.id = ''
-                    this.filters.project_name = ''
-                    this.getProjectList(15,1);
+                    this.getProjectExtendList(15,1)
                   }else{
                     this.$message({
                       type: 'success',
@@ -263,59 +285,38 @@
               })
 
             },
-            handleClose(){
-              // this.addForm.project_name = ''
-              this.addFormVisible = false
-            },
-            // 改变项目状态
-            handleChangeStatus: function(index, row) {
-              // console.log(row)
-              this.$axios.post('/project/handle',{
-                'id':row.id,
-                'status': row.status
-              }).then(response => {
-                if(response.data.status === 'SUCCESS'){
-                  row.status = -row.status;
-                  this.$message.success({
-                    message:'操作成功',
-                    center:true
-                  })
-                }else {
-                  this.listLoading = false;
-                  this.$message.error({
-                    message:'操作失败',
-                    center:true
-                  })
-                }
-
-              }).catch(error => {
-                console.log(error)
-                this.listLoading = false;
-                this.$message.error({
-                  message:'操作异常',
-                  center:false
-                })
-              })
-            },
             handleSizeChange(val) {
               this.pagesize = val;
-              this.getProjectList(this.pagesize, 1);
+              this.getProjectExtendList(this.pagesize, 1);
             },
             handleCurrentChange(val) {
               this.currentpage = val;
-              this.getProjectList(this.pagesize,this.currentpage)
+              this.getProjectExtendList(this.pagesize,this.currentpage)
 
             },
             //显示编辑界面
-            handleEdit: function (index, row) {
-              // console.log(index,row)
-                this.editFormVisible = true;
-                this.editForm = Object.assign({}, row);
+            handleEdit: function (row) {
+                this.$axios.post('/project/extend/info',row.e_id)
+                  .then(res => {
+                    if(res.data.status ==='SUCCESS'){
+                      this.deal_type = 'edit'
+                      this.projectExtendForm = res.data.data
+                      this.getProjectList()
+                      this.getTesterList()
+                      this.addFormVisible = true;
+                    }else {
+                      this.$message.error(response.data.msg)
+                    }
+                  })
+                  .catch(error =>{
+                    console.log(error)
+                  })
             },
             //显示新增界面
             handleAdd: function () {
-                this.getTesterList()
-                this.addFormVisible = true;
+              this.getTesterList()
+              this.getProjectList()
+              this.addFormVisible = true;
 
             },
           getTesterList(){
@@ -325,13 +326,42 @@
               })
               .catch(error => {})
           },
-          checkRequest(){
-            let request = this.form.methods;
-            if (request==="GET" || request==="DELETE"){
-              this.formchange=false
-            } else {
-              this.formchange=true
-            }
+          getTesterList(){
+            this.$axios.get('/tester/list')
+              .then(response => {
+                if(response.data.status === 'SUCCESS'){
+                  this.p_tester = response.data.data
+                }else{
+                  console.log(response.data.msg)
+                }
+              })
+              .catch(error => {})
+          },
+          getProjectList(){
+            this.$axios.get('/project/list')
+              .then(response => {
+                if(response.data.status === 'SUCCESS'){
+                  this.s_names = response.data.data
+                }else{
+                  console.log(response.data.msg)
+                }
+              })
+              .catch(error => {})
+          },
+          checkRequest(row){
+            this.$axios.post('/project/extend/edit',{
+              'e_id': row.e_id,
+              'status':row.status
+            }).then(response => {
+              if(response.data.status !== 'SUCCESS'){
+                this.$message.error(response.data.msg)
+              }else {
+                console.log(response.data)
+              }
+
+            }).catch(error => {
+              console.log(error)
+            })
           },
             //编辑
             editSubmit: function () {
@@ -367,41 +397,37 @@
               })
 
             },
+          resetForm(){
+            this.addFormVisible = false
+            this.$refs.projectExtendForm.resetFields()
+          },
             //新增
             addSubmit: function () {
-            this.$refs.addForm.validate(valid => {
+
+            this.$refs.projectExtendForm.validate(valid => {
               if(valid){
-                this.addLoading = true;
-                this.$axios.post('/project/add',
-                    this.addForm.project_name
-                  ).then(response => {
-                    // console.log(response);
-                  if(response.data.status === 'SUCCESS'){
-                    this.addLoading = false;
-                    this.addFormVisible = false;
-                    this.addForm.project_name = ''
-                    this.$message.success({
-                      message:'新增项目成功',
-                      center:false
-                    })
-                    this.filters.id = ''
-                    this.filters.project_name = ''
-                    this.getProjectList(15,1);
-                  }else {
-                    this.addLoading = false;
-                    this.$message.error({
-                      message:'新增项目失败',
-                      center:false
-                    })
-                  }
+                let url = '/project/extend/add'
+                if(this.deal_type ==='edit'){
+                  url = '/project/extend/edit'
+                }
+                this.$axios.post(url,{
+                  'e_id': this.projectExtendForm.e_id,
+                  'p_name': this.projectExtendForm.p_name,
+                  'branch':this.projectExtendForm.branch,
+                  'md5':this.projectExtendForm.md5,
+                  'modify_content':this.projectExtendForm.modify_content,
+                  'modify_tester':this.projectExtendForm.modify_tester,
+                  'status':this.projectExtendForm.status
+                  }).then(response => {
+                    if(response.data.status === 'SUCCESS'){
+                      this.addFormVisible = false
+                      this.getProjectExtendList(15,1)
+                    }else {
+                      this.$message.error(response.data.msg)
+                    }
 
                 }).catch(error => {
                   console.log(error)
-                  this.addLoading = false;
-                  this.$message.error({
-                    message:'新增项目异常',
-                    center:false
-                  })
                 })
 
               }
@@ -435,7 +461,7 @@
     }
   }
   .el-form-item {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   .box-card {
     width: 100%;
