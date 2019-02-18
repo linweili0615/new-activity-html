@@ -40,6 +40,7 @@
                           <template slot-scope="scope">
                             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
                             <el-button type="danger" size="small" @click="handleDel(scope.row)">删除</el-button>
+                            <el-button size="small" type="info" plain @click="handleCopy(scope.row)">点击复制</el-button>
                           </template>
                         </el-table-column>
                       </el-table>
@@ -253,8 +254,17 @@
                 })
 
             },
-
-
+          copyPre(row){
+            return row.p_name + '\n'
+              + '----------------麻烦更到线上' + '\n'
+              + row.md5 + '\n'
+          },
+          handleCopy(row){
+            this.$copyText(this.copyPre(row))
+              .then(function (e) {
+                console.log(e)
+              })
+          },
             //删除
             handleDel: function (row) {
               // console.log(index, row)
