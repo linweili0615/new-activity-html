@@ -24,10 +24,10 @@
                                 style="width: 100%;">
                         <!--<el-table-column width="50" label="序号" prop="e_id"></el-table-column>-->
                         <el-table-column width="240" label="服务名称" prop="p_name" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="branch" label="GIT分支" width="320"  show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="branch" label="GIT分支" width="260"  show-overflow-tooltip></el-table-column>
                         <el-table-column prop="md5" label="MD5" width="300" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="modify_content" label="修改内容" width="150" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="modify_tester" label="测试" width="120" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="modify_tester" label="测试" width="100" show-overflow-tooltip></el-table-column>
                         <el-table-column label="状态" width="100">
                           <template slot-scope="scope">
                             <el-select v-model="scope.row.status" size="medium" @change="checkRequest(scope.row)">
@@ -35,7 +35,7 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="modify_date" label="处理时间" width="200" sortable show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="modify_date" label="处理时间" width="180" sortable show-overflow-tooltip></el-table-column>
                         <el-table-column label="操作" style="min-width: 260px;">
                           <template slot-scope="scope">
                             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
