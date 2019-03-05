@@ -28,12 +28,12 @@
                                 style="width: 100%;">
                         <!--<el-table-column width="50" label="序号" prop="e_id"></el-table-column>-->
                         <el-table-column width="240" label="服务名称" prop="p_name" show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="branch" label="GIT分支" width="260"
+                        <el-table-column prop="branch" label="GIT分支" width="230"
                                          show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="md5" label="MD5" width="300" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="md5" label="MD5" width="400" show-overflow-tooltip></el-table-column>
                         <el-table-column prop="modify_content" label="修改内容" width="150"
                                          show-overflow-tooltip></el-table-column>
-                        <el-table-column prop="modify_tester" label="测试" width="100"
+                        <el-table-column prop="modify_tester" label="测试" width="80"
                                          show-overflow-tooltip></el-table-column>
                         <el-table-column label="状态" width="100">
                           <template slot-scope="scope">
@@ -43,9 +43,9 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="modify_date" label="处理时间" width="180" sortable
+                        <el-table-column prop="modify_date" label="处理时间" width="160" sortable
                                          show-overflow-tooltip></el-table-column>
-                        <el-table-column label="操作" style="min-width: 260px;">
+                        <el-table-column label="操作" style="min-width: 220px;">
                           <template slot-scope="scope">
                             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
                             <el-button type="danger" size="small" @click="handleDel(scope.row)">删除</el-button>
@@ -411,8 +411,7 @@
         })
       },
       resetForm() {
-        // this.$refs['projectExtendForm'].resetFields()
-
+        this.$refs['projectExtendForm'].resetFields()
         this.projectExtendForm.e_id = ''
         this.projectExtendForm.p_name = ''
         this.projectExtendForm.branch = ''
